@@ -1,6 +1,7 @@
 module digital_lock (
     input wire clk,
     input wire reset,
+    input wire relock,
     input wire bit_in,
     input wire enter,
 
@@ -27,6 +28,7 @@ module digital_lock (
     password_core password_unit (
         .clk(clk),
         .reset(reset),
+        .relock(relock),
         .bit_in(bit_in),
         .enter(gated_enter),
 
@@ -47,7 +49,7 @@ module digital_lock (
     );
 
 
-    // Lockout timer
+    //  Automactic Lockout timer
     lockout_timer #(
         .LOCKOUT_CYCLES(5)
     ) timer_unit (

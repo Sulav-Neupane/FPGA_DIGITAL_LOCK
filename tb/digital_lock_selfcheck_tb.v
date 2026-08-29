@@ -4,6 +4,7 @@ module digital_lock_selfcheck_tb;
 
     reg clk;
     reg reset;
+    reg relock;
     reg bit_in;
     reg enter;
 
@@ -18,6 +19,7 @@ module digital_lock_selfcheck_tb;
     digital_lock uut (
         .clk(clk),
         .reset(reset),
+        .relock(relock),
         .bit_in(bit_in),
         .enter(enter),
 
@@ -97,6 +99,7 @@ module digital_lock_selfcheck_tb;
 
         clk    = 0;
         reset  = 1;
+        relock = 0;
         bit_in = 0;
         enter  = 0;
 
@@ -235,7 +238,45 @@ module digital_lock_selfcheck_tb;
             "Correct password unlocks system"
         );
 
+                    // ===================================
+            // TEST 8: MANUAL RELOCK
+                // ===================================
 
+            // Assert relock away from rising edge
+            @(negedge clk);
+            relock = 1'b1;
+
+            // Allow one rising edge to capture relock
+            @(posedge clk);
+            #1;
+
+                check(
+                    unlocked == 1'b0,
+                    "Manual relock returns system to locked state"
+                    );
+
+                check(
+                uut.password_unit.bit_count == 3'd0,
+                "Manual relock clears password entry progress"
+                );
+
+
+                        // Release relock
+                        @(negedge clk);
+                        relock = 1'b0;
+
+// ===================================
+// TEST 9: LOGIN AFTER RELOCK
+// ===================================
+
+            submit_password(4'b1011);
+
+            #1;
+
+            check(
+            unlocked == 1'b1,
+            "Correct password works again after manual relock"
+            );
         // ===================================
         // FINAL RESULT
         // ===================================

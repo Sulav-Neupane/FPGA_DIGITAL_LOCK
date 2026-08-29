@@ -1,6 +1,7 @@
 module password_core (
     input wire clk,
     input wire reset,
+    input wire relock,
     input wire bit_in,
     input wire enter,
 
@@ -21,10 +22,19 @@ module password_core (
             unlocked <= 1'b0;
             failed <= 1'b0;
         end
+        // Manually lock the door again
+        else if (relock) begin
+            entered_password <= 4'b0000;
+            bit_count        <= 3'd0;
+            unlocked         <= 1'b0;
+            failed           <= 1'b0;
+        end
 
         else begin
 
             // failed should normally stay low
+            // It becomes 1 for only one clock cycle
+            // after an incorrect password.
             failed <= 1'b0;
 
             if (enter && !unlocked) begin
