@@ -1,0 +1,20 @@
+# Simulation executables
+*_sim
+*.sim
+a.out
+
+# Waveform files
+*.vcd
+*.fst
+*.lxt
+*.lxt2
+
+# Logs
+*.log
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
